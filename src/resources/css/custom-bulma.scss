@@ -1,0 +1,18 @@
+@import "~bulma/sass/utilities/initial-variables";
+@import "~bulma/sass/utilities/functions";
+$primary: #fff;
+$body-background-color: $grey-darker;
+$custom-colors: (
+    "purple": $purple,
+    "orange": scale-color($orange, $lightness: 30%),
+    "yellow": scale-color($yellow, $lightness: -40%),
+    "grey-light": scale-color($grey-light, $lightness: -40%)
+);
+// $body-font-size: 1.2em;
+$size-3: 2rem; // Override main font size
+
+@import "~bulma/bulma";
+
+.heading {
+    font-size: $size-6; // Override font size of headers in panels? This should be a variable but isn't
+}
