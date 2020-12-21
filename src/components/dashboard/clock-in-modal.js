@@ -1,7 +1,9 @@
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 import PropTypes from 'prop-types';
-import getJobs from '../libs/tsheets/get_jobs';
-import { clockIn } from '../libs/tsheets/clock_in_out';
+import getActivities from '../../libs/kimai/get_activities';
+import clockIn from '../../libs/kimai/clock_in';
 
 export default class ClockInModal extends React.Component {
   constructor(props) {
@@ -10,38 +12,24 @@ export default class ClockInModal extends React.Component {
       loading: true,
       jobList: [],
     };
-  }
 
-  componentDidMount() {
-    function handleResponse(resp) {
-      if (resp.error) {
-        alert(resp.error.message);
-        return;
-      }
+    getActivities().then((activities) => {
       this.setState({
         loading: false,
-        jobList: resp.jobs,
+        jobList: activities,
       });
-    }
-
-    getJobs({}, handleResponse.bind(this));
+    });
   }
 
-  handleJobSelect(id) {
+  handleJobSelect(activityId, projectId) {
     const { onClose } = this.props;
-    function handleClockIn(resp) {
-      if (resp.error) {
-        alert(resp.error.message);
-        return;
-      }
-      onClose(true);
-    }
 
     clockIn({
-      clockIn: {
-        jobId: id,
-      },
-    }, handleClockIn.bind(this));
+      activity: activityId,
+      project: projectId,
+    });
+
+    onClose(true);
   }
 
   render() {
@@ -56,10 +44,16 @@ export default class ClockInModal extends React.Component {
             <button className="delete" type="button" aria-label="close" onClick={(e) => { e.stopPropagation(); onClose(); }} />
           </header>
           <section className="modal-card-body">
-            {loading ? <div>Loading...</div> : (
+            {loading ? <span className="has-text-black"><FontAwesomeIcon icon={faCircleNotch} className="fa-spin" /> Loading...</span> : (
               <div>
                 {jobList.map(i => (
-                  <button type="submit" className="m-t-sm m-b-sm p-t-lg p-b-lg button is-fullwidth" onClick={(e) => { e.stopPropagation(); this.handleJobSelect(i.id); }} key={i.id}>{i.name}</button>
+                  <button type="submit" className="m-t-sm m-b-sm p-t-lg p-b-lg button is-fullwidth" onClick={(e) => { e.stopPropagation(); this.handleJobSelect(i.activityId, i.projectId); }} key={i.activityId}>
+                    <span style={{
+                      backgroundColor: i.color, width: '1em', height: '1em', marginRight: '0.5em',
+                    }}
+                    />
+                    {i.name}
+                  </button>
                 ))}
               </div>
             )}

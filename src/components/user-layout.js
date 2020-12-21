@@ -1,13 +1,14 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
+import { withRouter } from 'react-router-dom';
+import Navbar from './navbar';
 
-export default class GuestLayout extends React.PureComponent {
+class GuestLayout extends React.PureComponent {
   render() {
     // eslint-disable-next-line
-    const { children } = this.props;
+    const { children, icon, name } = this.props;
     return (
-      <div>
+      <div className="has-navbar-fixed-bottom">
         <div className="wrapper container p-md">
           <div className="columns">
             <main className="column main">
@@ -15,9 +16,9 @@ export default class GuestLayout extends React.PureComponent {
                 <div className="level-left">
                   <div className="level-item">
                     <div className="title has-text-primary">
-                      <FontAwesomeIcon icon={faTachometerAlt} />
+                      <FontAwesomeIcon icon={icon} />
                       {' '}
-                      Dashboard
+                      {name}
                     </div>
                   </div>
                 </div>
@@ -26,7 +27,10 @@ export default class GuestLayout extends React.PureComponent {
             </main>
           </div>
         </div>
+        <Navbar />
       </div>
     );
   }
 }
+
+export default withRouter(GuestLayout);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
-import { getWeather } from '../libs/climacell/get_weather';
+import { getWeather } from '../../libs/climacell/get_weather';
 
 const weatherIcons = require.context('../resources/img/weather_icons', true);
 

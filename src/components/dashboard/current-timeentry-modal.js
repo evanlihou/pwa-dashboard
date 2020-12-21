@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import getCurrentStatus from '../libs/tsheets/get_current_status';
-import { clockOut } from '../libs/tsheets/clock_in_out';
-import updateNotes from '../libs/tsheets/update_notes';
+import getCurrentStatus from '../../libs/tsheets/get_current_status';
+import { clockOut } from '../../libs/tsheets/clock_in_out';
+import updateNotes from '../../libs/tsheets/update_notes';
 
 export default class CurrentTimeEntryModal extends React.Component {
   constructor(props) {

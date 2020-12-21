@@ -1,7 +1,11 @@
 import React from 'react';
 import ReactPWAIcon from './resources/img/react-pwa.png';
+import NotesApi from './api/notesApi';
 
 export default class Server {
+  constructor({ addMiddleware }) {
+    addMiddleware(NotesApi);
+  }
   // eslint-disable-next-line
   apply(serverHandler) {
     serverHandler.hooks.beforeHtmlRender.tapPromise('AddTheming', async (Application) => {

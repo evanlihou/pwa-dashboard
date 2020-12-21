@@ -1,10 +1,9 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
-import getCurrentStatus from '../libs/tsheets/get_current_status';
+import getStatus from '../../libs/kimai/get_status';
 import ClockInModal from './clock-in-modal';
 import CurrentTimeEntryModal from './current-timeentry-modal';
-import tsheetsConfig from '../libs/tsheets/get_configuration';
 
 export default class WorkWidget extends React.Component {
   constructor(props) {
@@ -24,8 +23,7 @@ export default class WorkWidget extends React.Component {
     this.tickInterval = null;
   }
 
-  componentDidMount() {
-    console.log(tsheetsConfig);
+  async componentDidMount() {
     this.tick();
     this.tickInterval = setInterval(() => (this.tick()), 30 * 1000);
   }
@@ -34,25 +32,24 @@ export default class WorkWidget extends React.Component {
     clearInterval(this.tickInterval);
   }
 
-  tick() {
-    function handleResponse(resp) {
-      if (resp.error) {
-        alert(resp.error.message);
-        return;
-      }
+  async tick() {
+    this.setState({ loading: true });
+    try {
+      const { status, totals } = await getStatus();
       this.setState({
         hasValues: true,
         loading: false,
-        isIn: resp.status.clockedIn,
-        activity: resp.status.jobName,
-        activityLength: resp.status.shift_time,
-        timeIn: (new Date(resp.status.start)).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
-        today: resp.totals.day,
-        thisWeek: resp.totals.week,
+        isIn: status.clockedIn,
+        activity: status.jobName,
+        activityLength: status.shift_time,
+        timeIn: (new Date(status.start)).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+        today: totals.day,
+        thisWeek: totals.week,
       });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
     }
-    this.setState({ loading: true });
-    getCurrentStatus(handleResponse.bind(this));
   }
 
   clockInOut() {

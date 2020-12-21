@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { CKEditor } from '@ckeditor/ckeditor5-react';
-import CustomEditor from '../libs/ckeditor5/build/ckeditor';
+import CustomEditor from '../../libs/ckeditor5/build/ckeditor';
 
-import '../resources/css/notesWidget.scss';
+import '../../resources/css/notesWidget.scss';
 
 export default class NotesWidget extends React.Component {
   constructor(props) {
