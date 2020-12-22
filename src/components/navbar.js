@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useLocation, Link } from 'react-router-dom';
 
 const NavItem = ({ to, children }) => {
@@ -8,6 +9,11 @@ const NavItem = ({ to, children }) => {
       {children}
     </Link>
   );
+};
+
+NavItem.propTypes = {
+  to: PropTypes.string.isRequired,
+  children: PropTypes.element.isRequired,
 };
 
 const Navbar = () => (

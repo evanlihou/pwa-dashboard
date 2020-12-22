@@ -1,11 +1,12 @@
 import React from 'react';
 import { faClock } from '@fortawesome/free-solid-svg-icons';
 import DataGrid from 'react-data-grid';
-import UserLayout from './user-layout';
-import GetTimesheets from '../libs/kimai/get_timesheets';
+import UserLayout from '../user-layout';
+import GetTimesheets from '../../libs/kimai/get_timesheets';
 import 'react-data-grid/dist/react-data-grid.css';
-import config from '../libs/kimai/get_configuration';
-import GetStatus from '../libs/kimai/get_status';
+import config from '../../libs/kimai/get_configuration';
+import GetStatus from '../../libs/kimai/get_status';
+import TimesheetEditModal from './timesheet-edit-modal';
 
 function sameDay(d1, d2) {
   return d1.getFullYear() === d2.getFullYear()
@@ -36,9 +37,9 @@ class TimetrackDashboard extends React.PureComponent {
   }
 
   onRowClick(row) {
-    console.log(row);
     this.setState({
       timesheetEditModalOpen: true,
+      selectedRow: row,
     });
   }
 
@@ -47,6 +48,7 @@ class TimetrackDashboard extends React.PureComponent {
     this.setState({
       weekTotal: status.totals.week,
       dayTotal: status.totals.day,
+      fribWeekTotal: status.totals.fribWeek,
     });
   }
 
@@ -71,7 +73,7 @@ class TimetrackDashboard extends React.PureComponent {
 
   render() {
     const {
-      rows, timesheetEditModalOpen, weekTotal, dayTotal,
+      rows, timesheetEditModalOpen, selectedRow, weekTotal, dayTotal, fribWeekTotal,
     } = this.state;
     return (
       <UserLayout icon={faClock} name="Timetrack">
@@ -90,7 +92,8 @@ class TimetrackDashboard extends React.PureComponent {
           </div>
           <div className="column is-third">
             <div className="box notification">
-              Test 3
+              <div className="heading">FRIB This Week</div>
+              <div className="title is-5">{fribWeekTotal}</div>
             </div>
           </div>
         </div>
@@ -99,7 +102,6 @@ class TimetrackDashboard extends React.PureComponent {
           rows={rows}
           onRowClick={(_idx, row) => this.onRowClick(row)}
         />
-        {timesheetEditModalOpen ? 'OPEN MODAL' : <></>}
 
         {config.friendly_url !== undefined
           ? (
@@ -107,6 +109,18 @@ class TimetrackDashboard extends React.PureComponent {
               <a className="button is-dark" href={config.friendly_url}>Open administration interface</a>
             </div>
           ) : <></>}
+        {timesheetEditModalOpen ? (
+          <TimesheetEditModal
+            timesheetId={selectedRow.id}
+            onClose={(shouldRefresh = false) => {
+              if (shouldRefresh) {
+                this.getTimesheets();
+                this.getStatus();
+              }
+              this.setState({ timesheetEditModalOpen: false });
+            }}
+          />
+        ) : <></>}
       </UserLayout>
     );
   }

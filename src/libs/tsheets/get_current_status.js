@@ -145,7 +145,6 @@ function callApiForCurrent(sendResponse) {
 }
 
 export default function getCurrentStatus(sendResponse) {
-  console.log('Message: Getting current status');
   // Sometimes the message will send twice. Cache it for a bit to keep API usage down
   if (CACHE.loading === true) { CACHE.addCallback(sendResponse); return true; }
   if (CACHE.data !== null) { sendResponse(CACHE.data); }

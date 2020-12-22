@@ -17,8 +17,6 @@ const ORIGIN_HINT = 'Desk Dashboard';
  * @param {function} sendResponse           - Callback for the response
  */
 function clockIn(request, sendResponse) {
-  console.log('Message: Clocking in');
-
   const items = {
     tsheets_token: config.key,
     tsheets_user_id: config.userid,
@@ -73,7 +71,6 @@ function clockIn(request, sendResponse) {
  * @param {function} sendResponse           - Callback for the response
  */
 function clockOut(request, sendResponse) {
-  console.log('Message: Clocking out');
   const items = {
     tsheets_token: config.key,
     tsheets_user_id: config.userid,

@@ -15,6 +15,9 @@ export default async function GetTimesheets(opts) {
   if (opts.end !== undefined) {
     data.end = opts.end.toISOString();
   }
+  if (opts.customerId !== undefined) {
+    data.customers = opts.customerId;
+  }
 
   const response = await fetch(`${config.base_url}/timesheets${formatGetParams(data)}`, {
     method: 'GET',
@@ -29,4 +32,5 @@ export default async function GetTimesheets(opts) {
  * @typedef {Object} GetTimesheetsOpts
  * @property {date} start
  * @property {date} end
+ * @property {int?} customerId
  */

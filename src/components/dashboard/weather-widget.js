@@ -30,10 +30,10 @@ export default class WeatherWidget extends React.Component {
     this.setState({ loading: true });
     function handleResposne(resp) {
       if (resp.error !== undefined) {
-        alert('Error fetching weather!');
+        // alert('Error fetching weather!');
         return;
       }
-      console.log(resp);
+      // console.log(resp);
       try {
         this.setState({
           icon: weatherIcons(`./${resp.weather.weather_code.value}.svg`).default,

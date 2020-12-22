@@ -38,7 +38,7 @@ app.get('/api/notes', async (req, res) => {
         error: 'Unable to create directory',
       });
     }
-    console.log(e);
+    // console.log(e);
     return res.json({
       error: 'Unhandled error',
     });
@@ -46,7 +46,7 @@ app.get('/api/notes', async (req, res) => {
 });
 
 app.post(/\/api\/notes\/([\w\d/.]+)$/, bodyParser.text(), async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   const userProvidedPath = req.params[0];
   if (userProvidedPath === null || userProvidedPath === undefined) {
     return res.json({
@@ -73,7 +73,7 @@ app.post(/\/api\/notes\/([\w\d/.]+)$/, bodyParser.text(), async (req, res) => {
     });
   }
 
-  console.log(req.body);
+  // console.log(req.body);
 
   const safeContent = sanitizeHtml(req.body);
 
@@ -110,7 +110,7 @@ app.delete(/\/api\/notes\/([\w\d/.]+)$/, async (req, res) => {
         error: 'Directory not empty',
       });
     }
-    console.error(e);
+    // console.error(e);
   }
 
   return res.json();

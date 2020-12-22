@@ -28,7 +28,7 @@ class Dashboard extends React.PureComponent {
             <WeatherWidget />
           </div> */}
           <div className="column">
-            <NotesWidget />
+            <NotesWidget id={0} />
           </div>
         </div>
       </UserLayout>

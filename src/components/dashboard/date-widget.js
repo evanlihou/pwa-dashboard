@@ -28,6 +28,7 @@ export default class DateWidget extends React.Component {
     this.setState({
       time: {
         main: date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+        otherTzName: 'Chicago',
         otherTz: date.toLocaleTimeString('en-US', { timeZone: 'America/Chicago', hour: 'numeric', minute: '2-digit' }),
         zulu: date.toLocaleTimeString('en-US', {
           timeZone: 'Etc/UTC', hour: '2-digit', minute: '2-digit', hour12: false,

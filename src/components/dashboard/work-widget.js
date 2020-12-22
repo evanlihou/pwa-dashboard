@@ -19,6 +19,7 @@ export default class WorkWidget extends React.Component {
       timeIn: '',
       today: '',
       thisWeek: '',
+      status: null,
     };
     this.tickInterval = null;
   }
@@ -37,6 +38,7 @@ export default class WorkWidget extends React.Component {
     try {
       const { status, totals } = await getStatus();
       this.setState({
+        status,
         hasValues: true,
         loading: false,
         isIn: status.clockedIn,
@@ -68,11 +70,11 @@ export default class WorkWidget extends React.Component {
   render() {
     const {
       loading, hasValues, isIn, activity, activityLength, timeIn, today, thisWeek,
-      promptClockInJobs, promptTimeEntryModal,
+      promptClockInJobs, promptTimeEntryModal, status,
     } = this.state;
     return (
       <div role="button" tabIndex={0} className="box notification is-purple" onClick={() => { this.clockInOut(); }} onKeyPress={(e) => { if (e.key === 'Enter') this.clockInOut(); }}>
-        <div className="heading">Work</div>
+        <div className="heading">TimeTrack</div>
         {loading ? <span style={{ position: 'absolute', top: '5px', right: '10px' }}><FontAwesomeIcon icon={faCircleNotch} className="fa-spin" /></span> : <></>}
         {!hasValues ? <></> : (
           <div>
@@ -118,6 +120,7 @@ export default class WorkWidget extends React.Component {
               }
               this.setState({ promptTimeEntryModal: false });
             }}
+            status={status}
           />
         ) : <></>}
       </div>

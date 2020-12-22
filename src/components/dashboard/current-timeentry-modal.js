@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import getCurrentStatus from '../../libs/tsheets/get_current_status';
-import { clockOut } from '../../libs/tsheets/clock_in_out';
-import updateNotes from '../../libs/tsheets/update_notes';
+import { format, startOfToday } from 'date-fns';
+import clockOut from '../../libs/kimai/clock_out';
+import updateNotes from '../../libs/kimai/update_timesheet';
 
 export default class CurrentTimeEntryModal extends React.Component {
   constructor(props) {
@@ -16,69 +16,58 @@ export default class CurrentTimeEntryModal extends React.Component {
   }
 
   componentDidMount() {
-    function handleResponse(resp) {
-      if (resp.error) {
-        alert(resp.error.message);
-        return;
-      }
-      this.setState({
-        hasValues: true,
-        loading: false,
-        timesheetId: resp.status.timesheetId,
-        notes: resp.status.shift_notes,
-        activity: resp.status.jobName,
-      }, () => {
-        // Automatically focus the notes when the component mounts
-        this.notesInput.focus();
-        this.notesInput.selectionStart = this.notesInput.value.length;
-        this.notesInput.selectionEnd = this.notesInput.value.length;
-      });
-    }
-    getCurrentStatus(handleResponse.bind(this));
+    const { status } = this.props;
+
+    this.setState({
+      hasValues: true,
+      loading: false,
+      timesheetId: status.timesheetId,
+      notes: status.shift_notes,
+      activity: `${status.jobName}`,
+      startTimeStr: format(status.start, 'HH:mm'),
+      startTimeMillis: null,
+      startTimeChanged: false,
+    }, () => {
+      // Automatically focus the notes when the component mounts
+      this.notesInput.focus();
+      this.notesInput.selectionStart = this.notesInput.value.length;
+      this.notesInput.selectionEnd = this.notesInput.value.length;
+    });
   }
 
-  handleClockOut() {
-    const { onClose } = this.props;
-    const { timesheetId } = this.state;
-    function handleResponse(resp) {
-      if (resp.error) {
-        alert(resp.error.message);
-        return;
-      }
-
-      onClose(true);
-    }
-
-    clockOut({
-      clockOut: {
-        timesheetId,
-      },
-    }, handleResponse.bind(this));
-  }
-
-  handleNotesChange() {
+  async handleClockOut() {
     const { onClose } = this.props;
     const { timesheetId, notes } = this.state;
-    function handleResponse(resp) {
-      if (resp.error) {
-        alert(resp.error.message);
-        return;
-      }
 
-      onClose(true);
-    }
+    await clockOut({
+      id: timesheetId,
+      description: notes,
+    });
 
-    updateNotes({
-      updateNotes: {
-        timesheetId,
-        notes,
-      },
-    }, handleResponse.bind(this));
+    onClose(true);
+  }
+
+  async handleNotesChange() {
+    const { onClose } = this.props;
+    const {
+      timesheetId, notes, startTimeMillis, startTimeChanged,
+    } = this.state;
+
+    const beginDate = startOfToday();
+    beginDate.setTime(beginDate.getTime() + startTimeMillis);
+
+    await updateNotes({
+      id: timesheetId,
+      description: notes,
+      begin: startTimeChanged === true ? beginDate : undefined,
+    });
+
+    onClose(true);
   }
 
   render() {
     const {
-      loading, hasValues, activity, notes,
+      loading, hasValues, activity, notes, startTimeStr,
     } = this.state;
     const { onClose } = this.props;
     return (
@@ -105,6 +94,12 @@ export default class CurrentTimeEntryModal extends React.Component {
                           <textarea className="textarea" onChange={e => this.setState({ notes: e.target.value })} value={notes} ref={(input) => { this.notesInput = input; }} />
                         </div>
                       </label>
+                      <label className="label">
+                        Start Time
+                        <div className="control">
+                          <input className="input" type="time" onChange={e => this.setState({ startTimeStr: e.target.value, startTimeMillis: e.target.valueAsDate.getTime(), startTimeChanged: true })} value={startTimeStr} />
+                        </div>
+                      </label>
                     </div>
                   </div>
                 )}
@@ -122,5 +117,6 @@ export default class CurrentTimeEntryModal extends React.Component {
 }
 
 CurrentTimeEntryModal.propTypes = {
+  status: PropTypes.objectOf().isRequired,
   onClose: PropTypes.func.isRequired,
 };

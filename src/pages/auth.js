@@ -10,7 +10,7 @@ export default [
   {
     path: '/timetrack',
     exact: true,
-    component: () => import('../components/timetrack-dashboard'),
+    component: () => import('../components/timetrack/index'),
     seo: {
       title: 'Timetrack',
     },

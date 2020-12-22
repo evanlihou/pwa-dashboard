@@ -1,16 +1,22 @@
 import config from './get_configuration';
-import { getServerTime } from './date_tools';
+import { toLocalTime } from './date_tools';
 
 /**
  * Clock out
  * @param {ClockOutOpts} opts          - The request information
  */
-export default async function ClockOut(opts) {
+export default async function UpdateTimesheet(opts) {
   const data = {
-    end: await getServerTime(),
+    description: opts.description,
+    project: opts.projectId,
+    activity: opts.activityId,
   };
-  if (opts.description !== undefined) {
-    data.description = opts.description;
+
+  if (opts.begin !== undefined) {
+    data.begin = toLocalTime(opts.begin);
+  }
+  if (opts.end !== undefined) {
+    data.end = toLocalTime(opts.end);
   }
 
   const response = await fetch(`${config.base_url}/timesheets/${opts.id}`, {
@@ -24,6 +30,9 @@ export default async function ClockOut(opts) {
 
 /**
  * Options for getting timesheets
- * @typedef {Object} ClockOutOpts
+ * @typedef {Object} UpdateNotesOpts
  * @property {int} id Timesheet ID to clock out of
+ * @property {string} description
+ * @property {Date} begin
+ * @property {Date} end
  */

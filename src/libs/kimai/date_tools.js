@@ -5,9 +5,10 @@ import config from './get_configuration';
  * Convert a date to the format that the Kimai API expects
  * @param {Date} date
  */
-export function toLocalTime(date) {
+export function toLocalTime(date, useSeconds = true) {
+  if (date === null || date === undefined) return null;
   // YYYY-MM-DDTHH:mm:ss
-  return format(date, "yyyy-MM-dd'T'HH:mm:ss");
+  return format(date, (useSeconds ? "yyyy-MM-dd'T'HH:mm:ss" : "yyyy-MM-dd'T'HH:mm"));
 }
 
 export async function getServerTime() {
@@ -19,9 +20,12 @@ export async function getServerTime() {
   const currentTime = (await timeResponse.json()).now;
 
   if (currentTime === undefined || currentTime === null) {
+    // eslint-disable-next-line no-alert
     alert('Unable to get current time from server');
     throw Error('Unable to get current time from server');
   }
+
+  return currentTime;
 }
 
 export function secondsToHumanReadable(seconds) {
