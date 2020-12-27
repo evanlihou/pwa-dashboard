@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import PropTypes from 'prop-types';
 import { useLocation, Link } from 'react-router-dom';
 
-const NavItem = ({ to, children }) => {
+const NavItem = ({ to, children }: PropsWithChildren<{to: string}>) => {
   const location = useLocation();
   return (
     <Link to={to} className={`navbar-item ${location.pathname === to ? 'is-active' : ''}`}>
@@ -13,7 +13,7 @@ const NavItem = ({ to, children }) => {
 
 NavItem.propTypes = {
   to: PropTypes.string.isRequired,
-  children: PropTypes.element.isRequired,
+  children: PropTypes.node.isRequired,
 };
 
 const Navbar = () => (

@@ -1,10 +1,20 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import clockIn from '../../libs/kimai/clock_in';
-import ActivitySelector from '../timetrack/activity_selector';
+import ActivitySelector from '../timetrack/ActivitySelector';
+import DashboardComponent from '../DashboardComponent';
 
-export default class ClockInModal extends React.Component {
-  constructor(props) {
+type ClockInModalProps = {
+  onClose: Function,
+};
+
+type ClockInModalState = {
+  clockInNotes: string | null,
+};
+
+export default class ClockInModal extends DashboardComponent<ClockInModalProps, ClockInModalState> {
+  private notesInput = React.createRef<HTMLTextAreaElement>();
+
+  constructor(props: ClockInModalProps) {
     super(props);
     this.state = {
       clockInNotes: null,
@@ -14,23 +24,28 @@ export default class ClockInModal extends React.Component {
 
   async componentDidMount() {
     // Automatically focus the notes when the component mounts
-    this.notesInput.focus();
+    if (this.notesInput.current !== null) this.notesInput.current.focus();
   }
 
-  async handleJobSelect(activityId, projectId) {
+  async handleJobSelect(activityId: number, projectId: number) {
     const { clockInNotes } = this.state;
     const { onClose } = this.props;
+    const { addError } = this.context;
 
-    await clockIn({
-      activity: activityId,
-      project: projectId,
-      description: clockInNotes !== '' && clockInNotes !== null ? clockInNotes : undefined,
-    });
+    try {
+      await clockIn({
+        activity: activityId,
+        project: projectId,
+        description: clockInNotes !== '' && clockInNotes !== null ? clockInNotes : undefined,
+      });
+    } catch (error) {
+      addError(error.ToString());
+    }
 
     onClose(true);
   }
 
-  handleNotesChange(event) {
+  handleNotesChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
     this.setState({ clockInNotes: event.target.value });
   }
 
@@ -49,7 +64,7 @@ export default class ClockInModal extends React.Component {
               <label className="label">
                 Notes
                 <div className="control">
-                  <textarea className="textarea" onChange={e => this.setState({ clockInNotes: e.target.value })} ref={(input) => { this.notesInput = input; }} />
+                  <textarea className="textarea" onChange={e => this.setState({ clockInNotes: e.target.value })} ref={this.notesInput} />
                 </div>
               </label>
             </div>
@@ -60,7 +75,3 @@ export default class ClockInModal extends React.Component {
     );
   }
 }
-
-ClockInModal.propTypes = {
-  onClose: PropTypes.func.isRequired,
-};

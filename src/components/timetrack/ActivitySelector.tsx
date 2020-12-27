@@ -1,18 +1,30 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
-import bulmaCollapsible from '@creativebulma/bulma-collapsible';
 import GetActivities from '../../libs/kimai/get_activities';
+import GroupedActivities from '../../libs/kimai/@types/GroupedActivities';
 
-export default class ActivitySelector extends React.Component {
-  constructor(props) {
+// Get around the fact this package doesn't have types
+const bulmaCollapsible: any = require('@creativebulma/bulma-collapsible');
+
+type ActivitySelectorProps = {
+  onSelectActivity: Function,
+}
+type ActivitySelectorState = {
+  loading: boolean,
+  activities: GroupedActivities,
+}
+
+export default class ActivitySelector extends React.Component<ActivitySelectorProps,
+  ActivitySelectorState> {
+  private collapsibles = React.createRef<HTMLDivElement>();
+
+  constructor(props: ActivitySelectorProps) {
     super(props);
     this.state = {
       loading: true,
       activities: {},
     };
-    this.collapsibles = React.createRef();
   }
 
   async componentDidMount() {
@@ -22,7 +34,7 @@ export default class ActivitySelector extends React.Component {
       loading: false,
       activities,
     }, () => {
-      this.bulmaCollapsibles = bulmaCollapsible.attach('.is-collapsible', {
+      bulmaCollapsible.attach('.is-collapsible', {
         container: this.collapsibles.current,
       });
     });
@@ -56,7 +68,7 @@ export default class ActivitySelector extends React.Component {
                     className="message-body is-collapsible"
                     data-parent="accordion_first"
                   >
-                    {proj.activities.map(i => (
+                    {proj.activities.map((i: any) => (
                       <button
                         type="submit"
                         className="m-t-sm m-b-sm p-t-lg p-b-lg button is-fullwidth"
@@ -80,7 +92,3 @@ export default class ActivitySelector extends React.Component {
     );
   }
 }
-
-ActivitySelector.propTypes = {
-  onSelectActivity: PropTypes.func.isRequired,
-};

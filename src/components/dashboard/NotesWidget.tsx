@@ -1,13 +1,24 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-
+import React, { ChangeEvent, MouseEvent } from 'react';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
-import CustomEditor from '../../libs/ckeditor5/build/ckeditor';
-
 import '../../resources/css/notesWidget.scss';
+import DashboardComponent from '../DashboardComponent';
 
-export default class NotesWidget extends React.Component {
-  constructor(props) {
+const CustomEditor = require('../../libs/ckeditor5/build/ckeditor');
+
+type NotesWidgetProps = {
+  id?: string,
+}
+
+type NotesWidgetState = {
+  notes: string,
+}
+
+export default class NotesWidget extends DashboardComponent<NotesWidgetProps, NotesWidgetState> {
+  private supportsLocalStorage: boolean;
+
+  private localStorageKey: string;
+
+  constructor(props: NotesWidgetProps) {
     super(props);
     this.state = {
       notes: '<p>Notes can go here</p>',
@@ -15,8 +26,8 @@ export default class NotesWidget extends React.Component {
     this.supportsLocalStorage = typeof Storage !== 'undefined';
     // ID can be used to support multiple chronometers on a dashboard while keeping
     // their respective start times
-    this.idString = props.id !== undefined ? props.id : '';
-    this.localStorageKey = `notesContent${this.idString}`;
+    const idString = props.id !== undefined ? props.id : '';
+    this.localStorageKey = `notesContent${idString}`;
   }
 
   componentDidMount() {
@@ -28,7 +39,7 @@ export default class NotesWidget extends React.Component {
   }
 
   // eslint-disable-next-line class-methods-use-this,no-unused-vars
-  onLongPress(event) {
+  onLongPress(event: MouseEvent<HTMLDivElement>) {
     // This is behaving incorrectly on tablet, just don't use it for now.
     // const response = confirm("Are you sure you want to clear all notes?");
     // if (response === true) {
@@ -68,11 +79,11 @@ export default class NotesWidget extends React.Component {
                 'redo'],
             }}
             data={notes}
-            onReady={(editor) => {
+            onReady={(editor: any) => {
               // You can store the "editor" and use when it is needed.
               editor.setData(notes);
             }}
-            onChange={(_event, editor) => {
+            onChange={(_event: ChangeEvent, editor: any) => {
               const data = editor.getData();
               this.setState({
                 notes: data,
@@ -85,7 +96,3 @@ export default class NotesWidget extends React.Component {
     );
   }
 }
-
-NotesWidget.propTypes = {
-  id: PropTypes.string.isRequired,
-};

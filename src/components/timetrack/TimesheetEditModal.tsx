@@ -1,18 +1,49 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import UpdateTimesheet from '../../libs/kimai/update_timesheet';
 import GetTimesheet from '../../libs/kimai/get_timesheet';
 import { toLocalTime } from '../../libs/kimai/date_tools';
 import GetActivities from '../../libs/kimai/get_activities';
+import DashboardComponent from '../DashboardComponent';
+import GroupedActivities, { ProjectActivities } from '../../libs/kimai/@types/GroupedActivities';
+import Project from '../../libs/kimai/@types/serverResponses/Project';
 
-export default class TimesheetEditModal extends React.Component {
-  constructor(props) {
+type TimesheetEditModalProps = {
+  timesheetId: number,
+  onClose: Function,
+}
+
+type TimesheetEditModalState = {
+  hasValues: boolean,
+  loading: boolean,
+  timesheetId: number | null,
+  notes: string,
+  activity: string,
+  activityChanged: boolean,
+  startStr: string | null,
+  selectedStartDate: Date | null,
+  endStr: string | null,
+  selectedEndDate: Date | null,
+  activities: GroupedActivities | null,
+}
+
+export default class TimesheetEditModal extends DashboardComponent<
+  TimesheetEditModalProps, TimesheetEditModalState> {
+  private notesInput = React.createRef<HTMLTextAreaElement>();
+
+  constructor(props: TimesheetEditModalProps) {
     super(props);
     this.state = {
       loading: true,
+      hasValues: false,
       timesheetId: null,
       activity: '',
       notes: '',
+      activityChanged: false,
+      startStr: null,
+      selectedStartDate: null,
+      endStr: null,
+      selectedEndDate: null,
+      activities: null,
     };
   }
 
@@ -31,9 +62,9 @@ export default class TimesheetEditModal extends React.Component {
       activity: `${timesheet.project}-${timesheet.activity}`,
       activityChanged: false,
       startStr: toLocalTime(timesheet.begin, false),
-      selectedStartDate: undefined,
+      selectedStartDate: null,
       endStr: toLocalTime(timesheet.end, false),
-      selectedEndDate: undefined,
+      selectedEndDate: null,
       activities,
     });
   }
@@ -44,13 +75,28 @@ export default class TimesheetEditModal extends React.Component {
       timesheetId, notes, selectedStartDate, selectedEndDate, activity, activityChanged,
     } = this.state;
 
+    const { addError } = this.context;
+
+    if (timesheetId === null) {
+      addError('Unable to get timesheet ID');
+      return;
+    }
+
+    const activityId = Number(activity.split('-')[1]);
+    const projectId = Number(activity.split('-')[0]);
+
+    if (Number.isNaN(activityId) || Number.isNaN(projectId)) {
+      addError('Activity or project ID is not a number');
+      return;
+    }
+
     await UpdateTimesheet({
       id: timesheetId,
       description: notes,
-      activityId: activityChanged === true ? activity.split('-')[1] : undefined,
-      projectId: activityChanged === true ? activity.split('-')[0] : undefined,
-      begin: selectedStartDate !== undefined ? selectedStartDate : undefined,
-      end: selectedEndDate !== undefined ? selectedEndDate : undefined,
+      activityId: activityChanged === true ? activityId : undefined,
+      projectId: activityChanged === true ? projectId : undefined,
+      begin: selectedStartDate ?? undefined,
+      end: selectedEndDate ?? undefined,
     });
 
     onClose(true);
@@ -91,7 +137,8 @@ export default class TimesheetEditModal extends React.Component {
                               })}
                               value={activity}
                             >
-                              {Object.values(activities).map(proj => (
+                              {/* eslint-disable-next-line max-len */}
+                              {(Object.values(activities as GroupedActivities) as ProjectActivities[])?.map(proj => (
                                 <optgroup label={proj.name} key={proj.projectId}>
                                   {proj.activities.map(i => (
                                     <option value={`${proj.projectId}-${i.activityId}`}>
@@ -113,7 +160,7 @@ export default class TimesheetEditModal extends React.Component {
                             className="textarea"
                             onChange={e => this.setState({ notes: e.target.value })}
                             value={notes ?? ''}
-                            ref={(input) => { this.notesInput = input; }}
+                            ref={this.notesInput}
                           />
                         </div>
                       </label>
@@ -129,7 +176,7 @@ export default class TimesheetEditModal extends React.Component {
                               startStr: e.target.value,
                               selectedStartDate: e.target.value !== '' ? new Date(e.target.value.replace('T', ' ')) : null,
                             })}
-                            value={startStr}
+                            value={startStr ?? ''}
                           />
                         </div>
                       </label>
@@ -145,7 +192,7 @@ export default class TimesheetEditModal extends React.Component {
                               endStr: e.target.value,
                               selectedEndDate: e.target.value !== '' ? new Date(e.target.value.replace('T', ' ')) : null,
                             })}
-                            value={endStr}
+                            value={endStr ?? ''}
                           />
                         </div>
                       </label>
@@ -163,8 +210,3 @@ export default class TimesheetEditModal extends React.Component {
     );
   }
 }
-
-TimesheetEditModal.propTypes = {
-  timesheetId: PropTypes.number.isRequired,
-  onClose: PropTypes.func.isRequired,
-};

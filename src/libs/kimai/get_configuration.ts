@@ -7,7 +7,7 @@ export default {
     'Content-Type': 'application/json',
     'X-AUTH-USER': process.env.KIMAI_USER,
     'X-AUTH-TOKEN': process.env.KIMAI_KEY,
-  },
+  } as unknown as Headers,
   // cors_proxy_url: `http://${window.location.hostname}:${process.env.CORS_PROXY_PORT}`,
   // proxied_base_url: `http://${window.location.hostname}:${process.env.CORS_PROXY_PORT}/${process.env.TSHEETS_BASE_URL}`,
 };

@@ -1,12 +1,29 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
-import getStatus from '../../libs/kimai/get_status';
-import ClockInModal from './clock-in-modal';
-import CurrentTimeEntryModal from './current-timeentry-modal';
+import getStatus, { StatusStatus } from '../../libs/kimai/get_status';
+import ClockInModal from './ClockInModal';
+import CurrentTimeEntryModal from './CurrentTimeEntryModal';
+import DashboardComponent from '../DashboardComponent';
 
-export default class WorkWidget extends React.Component {
-  constructor(props) {
+type WorkWidgetState = {
+  loading: boolean,
+  promptClockInJobs: boolean,
+  promptTimeEntryModal: boolean,
+  hasValues: boolean,
+  isIn: boolean,
+  activity: string | null,
+  activityLength: string | null,
+  timeIn: string | null,
+  today: string,
+  thisWeek: string,
+  status: StatusStatus | null,
+}
+
+export default class WorkWidget extends DashboardComponent<{}, WorkWidgetState> {
+  private tickInterval: number | null;
+
+  constructor(props: {}) {
     super(props);
     this.state = {
       loading: true,
@@ -14,8 +31,8 @@ export default class WorkWidget extends React.Component {
       promptTimeEntryModal: false,
       hasValues: false,
       isIn: false,
-      activity: '',
-      activityLength: '',
+      activity: null,
+      activityLength: null,
       timeIn: '',
       today: '',
       thisWeek: '',
@@ -26,14 +43,19 @@ export default class WorkWidget extends React.Component {
 
   async componentDidMount() {
     this.tick();
-    this.tickInterval = setInterval(() => (this.tick()), 30 * 1000);
+    this.tickInterval = window.setInterval(() => (this.tick()), 30 * 1000);
   }
 
   componentWillUnmount() {
-    clearInterval(this.tickInterval);
+    if (this.tickInterval !== null) {
+      window.clearInterval(this.tickInterval);
+      // Ideally we would clear `this.tickInterval` but we know that the component
+      // is being unmounted anyway
+    }
   }
 
   async tick() {
+    const { addError } = this.context;
     this.setState({ loading: true });
     try {
       const { status, totals } = await getStatus();
@@ -43,14 +65,15 @@ export default class WorkWidget extends React.Component {
         loading: false,
         isIn: status.clockedIn,
         activity: status.jobName,
-        activityLength: status.shift_time,
-        timeIn: (new Date(status.start)).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+        activityLength: status.shiftTime,
+        timeIn: status.start !== null
+          ? (new Date(status.start)).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+          : null,
         today: totals.day,
         thisWeek: totals.week,
       });
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
+      addError(error);
     }
   }
 
@@ -120,7 +143,7 @@ export default class WorkWidget extends React.Component {
               }
               this.setState({ promptTimeEntryModal: false });
             }}
-            status={status}
+            status={status!}
           />
         ) : <></>}
       </div>

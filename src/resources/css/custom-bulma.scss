@@ -23,3 +23,7 @@ $size-3: 2rem; // Override main font size
 .has-navbar-fixed-bottom {
   padding-bottom: 5.25rem;
 }
+
+.modal-card {
+  overflow: auto;
+}

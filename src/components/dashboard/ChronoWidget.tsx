@@ -1,8 +1,24 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import DashboardComponent from '../DashboardComponent';
 
-export default class ChronoWidget extends React.Component {
-  constructor(props) {
+type ChronoWidgetProps = {
+  id?: string,
+};
+
+type ChronoWidgetState = {
+  isRunning: boolean,
+  startTime: Date | null,
+  runningTime: string,
+};
+
+export default class ChronoWidget extends DashboardComponent<ChronoWidgetProps, ChronoWidgetState> {
+  private tickInterval: number | null;
+
+  private supportsLocalStorage: boolean;
+
+  private localStorageKey: string;
+
+  constructor(props: ChronoWidgetProps) {
     super(props);
     this.state = {
       isRunning: false,
@@ -13,8 +29,8 @@ export default class ChronoWidget extends React.Component {
     this.supportsLocalStorage = typeof Storage !== 'undefined';
     // ID can be used to support multiple chronometers on a dashboard while keeping
     // their respective start times
-    this.idString = props.id !== undefined ? props.id : '';
-    this.localStorageKey = `chronoStartTime${this.idString}`;
+    const idString = props.id !== undefined ? props.id : '';
+    this.localStorageKey = `chronoStartTime${idString}`;
   }
 
   componentDidMount() {
@@ -24,12 +40,14 @@ export default class ChronoWidget extends React.Component {
         startTime: new Date(localStorage[this.localStorageKey]),
       });
       this.tick();
-      this.tickInterval = setInterval(() => (this.tick()), 100);
+      this.tickInterval = window.setInterval(() => (this.tick()), 100);
     }
   }
 
   componentWillUnmount() {
-    clearInterval(this.tickInterval);
+    if (this.tickInterval !== null) {
+      window.clearInterval(this.tickInterval);
+    }
   }
 
   onLongPress() {
@@ -41,8 +59,8 @@ export default class ChronoWidget extends React.Component {
 
   tick() {
     const { isRunning, startTime } = this.state;
-    if (isRunning) {
-      const runningMs = new Date() - startTime;
+    if (isRunning && startTime) {
+      const runningMs = new Date().getTime() - startTime.getTime();
       const hours = Math.floor(runningMs / (1000 * 60 * 60));
       const minutes = Math.floor(runningMs / (1000 * 60)) % 60;
       const seconds = Math.floor(runningMs / (1000)) % 60;
@@ -66,7 +84,9 @@ export default class ChronoWidget extends React.Component {
       this.setState({
         isRunning: false,
       });
-      clearInterval(this.tickInterval);
+      if (this.tickInterval !== null) {
+        window.clearInterval(this.tickInterval);
+      }
       if (this.supportsLocalStorage) {
         delete localStorage[this.localStorageKey];
       }
@@ -77,7 +97,7 @@ export default class ChronoWidget extends React.Component {
         startTime,
       });
       this.tick();
-      this.tickInterval = setInterval(() => (this.tick()), 100);
+      this.tickInterval = window.setInterval(() => (this.tick()), 100);
       localStorage[this.localStorageKey] = startTime.toJSON();
     }
   }
@@ -92,7 +112,3 @@ export default class ChronoWidget extends React.Component {
     );
   }
 }
-
-ChronoWidget.propTypes = {
-  id: PropTypes.string.isRequired,
-};
