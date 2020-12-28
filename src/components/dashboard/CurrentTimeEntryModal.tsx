@@ -86,13 +86,13 @@ export default class CurrentTimeEntryModal extends DashboardComponent<
     } = this.state;
     const { addError } = this.context;
 
-    if (startTimeMillis === null || timesheetId === null) {
+    if (timesheetId === null) {
       addError('Unable to get current timesheet');
       return;
     }
 
     const beginDate = startOfToday();
-    beginDate.setTime(beginDate.getTime() + startTimeMillis);
+    beginDate.setTime(beginDate.getTime() + (startTimeMillis !== null ? startTimeMillis : 0));
 
     await updateNotes({
       id: timesheetId,

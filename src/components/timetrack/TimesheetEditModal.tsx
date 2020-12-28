@@ -115,10 +115,7 @@ export default class TimesheetEditModal extends DashboardComponent<
           {loading ? <></> : (
             <div>
               <header className="modal-card-head">
-                <p className="modal-card-title">
-                  Time Entry
-                  {hasValues ? ` - ${activity}` : ''}
-                </p>
+                <p className="modal-card-title">Time Entry</p>
                 <button type="button" className="delete" aria-label="close" onClick={(e) => { e.stopPropagation(); onClose(); }} />
               </header>
               <section className="modal-card-body">

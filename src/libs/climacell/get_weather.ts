@@ -19,9 +19,8 @@ const UNITS = 'us';
 
 /**
  * Get the current weather
- * @param {function} sendResponse Callback function with response
  */
-export default function getWeather(sendResponse) {
+export default function getWeather(sendResponse: Function) {
   const data = {
     fields: FIELDS,
     lat: config.lat,
