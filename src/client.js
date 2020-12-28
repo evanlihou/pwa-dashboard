@@ -10,20 +10,19 @@ export default class Client {
 
   // Function that attempts to request a screen wake lock.
   keepAwake = async () => {
-    console.log('Getting wake lock');
     try {
       this.wakeLock = await navigator.wakeLock.request('screen');
     } catch (err) {
       if (window.location.hostname === 'localhost') {
+        // eslint-disable-next-line no-alert
         alert(`${err.name}, ${err.message}`);
       }
+      // eslint-disable-next-line no-console
       console.error('Note that wakelock only works in an HTTP context if on localhost');
     }
   };
 
   handleVisibilityChange = async () => {
-    console.log('visibility change');
-
     const functionToRun = async () => {
       if (this.wakeLock !== null && document.visibilityState === 'visible') {
         await this.keepAwake();

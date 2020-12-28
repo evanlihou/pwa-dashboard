@@ -1,7 +1,6 @@
 import config from './get_configuration';
 
 export default function updateNotes(request, sendResponse) {
-  console.log('Message: Updating notes');
   const items = {
     tsheets_token: config.key,
     tsheets_user_id: config.userid,

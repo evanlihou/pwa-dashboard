@@ -13,6 +13,17 @@ $size-3: 2rem; // Override main font size
 
 @import "~bulma/bulma";
 
+// Import Component main Sass File
+@import '~@creativebulma/bulma-collapsible';
+
 .heading {
     font-size: $size-6; // Override font size of headers in panels? This should be a variable but isn't
+}
+
+.has-navbar-fixed-bottom {
+  padding-bottom: 5.25rem;
+}
+
+.modal-card {
+  overflow: auto;
 }

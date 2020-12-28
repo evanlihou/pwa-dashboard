@@ -79,3 +79,5 @@ src/config/assets.js
 src/libs/ckeditor5/build
 
 .DS_Store
+
+userNotes

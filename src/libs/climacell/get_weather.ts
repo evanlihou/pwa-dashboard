@@ -1,5 +1,5 @@
 import config from './get_configuration';
-import formatGetParams from '../formatGetParams';
+import formatGetParams from '../format_get_params';
 
 const FIELDS = [
   'precipitation',
@@ -19,9 +19,8 @@ const UNITS = 'us';
 
 /**
  * Get the current weather
- * @param {function} sendResponse Callback function with response
  */
-export default function getWeather(sendResponse) {
+export default function getWeather(sendResponse: Function) {
   const data = {
     fields: FIELDS,
     lat: config.lat,

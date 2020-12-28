@@ -1,13 +1,29 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
-import getCurrentStatus from '../libs/tsheets/get_current_status';
-import ClockInModal from './clock-in-modal';
-import CurrentTimeEntryModal from './current-timeentry-modal';
-import tsheetsConfig from '../libs/tsheets/get_configuration';
+import getStatus, { StatusStatus } from '../../libs/kimai/get_status';
+import ClockInModal from './ClockInModal';
+import CurrentTimeEntryModal from './CurrentTimeEntryModal';
+import DashboardComponent from '../DashboardComponent';
 
-export default class WorkWidget extends React.Component {
-  constructor(props) {
+type WorkWidgetState = {
+  loading: boolean,
+  promptClockInJobs: boolean,
+  promptTimeEntryModal: boolean,
+  hasValues: boolean,
+  isIn: boolean,
+  activity: string | null,
+  activityLength: string | null,
+  timeIn: string | null,
+  today: string,
+  thisWeek: string,
+  status: StatusStatus | null,
+}
+
+export default class WorkWidget extends DashboardComponent<{}, WorkWidgetState> {
+  private tickInterval: number | null;
+
+  constructor(props: {}) {
     super(props);
     this.state = {
       loading: true,
@@ -15,44 +31,50 @@ export default class WorkWidget extends React.Component {
       promptTimeEntryModal: false,
       hasValues: false,
       isIn: false,
-      activity: '',
-      activityLength: '',
+      activity: null,
+      activityLength: null,
       timeIn: '',
       today: '',
       thisWeek: '',
+      status: null,
     };
     this.tickInterval = null;
   }
 
-  componentDidMount() {
-    console.log(tsheetsConfig);
+  async componentDidMount() {
     this.tick();
-    this.tickInterval = setInterval(() => (this.tick()), 30 * 1000);
+    this.tickInterval = window.setInterval(() => (this.tick()), 30 * 1000);
   }
 
   componentWillUnmount() {
-    clearInterval(this.tickInterval);
+    if (this.tickInterval !== null) {
+      window.clearInterval(this.tickInterval);
+      // Ideally we would clear `this.tickInterval` but we know that the component
+      // is being unmounted anyway
+    }
   }
 
-  tick() {
-    function handleResponse(resp) {
-      if (resp.error) {
-        alert(resp.error.message);
-        return;
-      }
+  async tick() {
+    const { addError } = this.context;
+    this.setState({ loading: true });
+    try {
+      const { status, totals } = await getStatus();
       this.setState({
+        status,
         hasValues: true,
         loading: false,
-        isIn: resp.status.clockedIn,
-        activity: resp.status.jobName,
-        activityLength: resp.status.shift_time,
-        timeIn: (new Date(resp.status.start)).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
-        today: resp.totals.day,
-        thisWeek: resp.totals.week,
+        isIn: status.clockedIn,
+        activity: status.jobName,
+        activityLength: status.shiftTime,
+        timeIn: status.start !== null
+          ? (new Date(status.start)).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+          : null,
+        today: totals.day,
+        thisWeek: totals.week,
       });
+    } catch (error) {
+      addError(error);
     }
-    this.setState({ loading: true });
-    getCurrentStatus(handleResponse.bind(this));
   }
 
   clockInOut() {
@@ -71,11 +93,11 @@ export default class WorkWidget extends React.Component {
   render() {
     const {
       loading, hasValues, isIn, activity, activityLength, timeIn, today, thisWeek,
-      promptClockInJobs, promptTimeEntryModal,
+      promptClockInJobs, promptTimeEntryModal, status,
     } = this.state;
     return (
       <div role="button" tabIndex={0} className="box notification is-purple" onClick={() => { this.clockInOut(); }} onKeyPress={(e) => { if (e.key === 'Enter') this.clockInOut(); }}>
-        <div className="heading">Work</div>
+        <div className="heading">TimeTrack</div>
         {loading ? <span style={{ position: 'absolute', top: '5px', right: '10px' }}><FontAwesomeIcon icon={faCircleNotch} className="fa-spin" /></span> : <></>}
         {!hasValues ? <></> : (
           <div>
@@ -121,6 +143,7 @@ export default class WorkWidget extends React.Component {
               }
               this.setState({ promptTimeEntryModal: false });
             }}
+            status={status!}
           />
         ) : <></>}
       </div>

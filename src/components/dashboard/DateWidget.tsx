@@ -1,22 +1,41 @@
 import React from 'react';
+import DashboardComponent from '../DashboardComponent';
 
-export default class DateWidget extends React.Component {
-  constructor(props) {
+type DateWidgetProps = {
+}
+
+type DateWidgetState = {
+  time: {
+    main: string,
+    otherTz: string,
+    otherTzName: string,
+    zulu: string
+  }
+}
+
+export default class DateWidget extends DashboardComponent<DateWidgetProps, DateWidgetState> {
+  private tickInterval?: number;
+
+  public otherTzName: string = 'Chicago';
+
+  public otherTzIdentifier: string = 'America/Chicago';
+
+  constructor(props: DateWidgetProps) {
     super(props);
     this.state = {
       time: {
         main: '',
         otherTz: '',
-        otherTzName: 'Chicago',
+        otherTzName: this.otherTzName,
         zulu: '',
       },
     };
-    this.tickInterval = null;
+    this.tickInterval = undefined;
   }
 
   componentDidMount() {
     this.tick();
-    this.tickInterval = setInterval(() => (this.tick()), 5 * 1000);
+    this.tickInterval = window.setInterval(() => (this.tick()), 5 * 1000);
   }
 
   componentWillUnmount() {
@@ -28,7 +47,8 @@ export default class DateWidget extends React.Component {
     this.setState({
       time: {
         main: date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
-        otherTz: date.toLocaleTimeString('en-US', { timeZone: 'America/Chicago', hour: 'numeric', minute: '2-digit' }),
+        otherTzName: this.otherTzName,
+        otherTz: date.toLocaleTimeString('en-US', { timeZone: this.otherTzIdentifier, hour: 'numeric', minute: '2-digit' }),
         zulu: date.toLocaleTimeString('en-US', {
           timeZone: 'Etc/UTC', hour: '2-digit', minute: '2-digit', hour12: false,
         }),

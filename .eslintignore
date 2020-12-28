@@ -1,2 +1,5 @@
 /src/libs/ckeditor5
 dist
+userNotes
+# These libs aren't even used anymore
+/src/libs/tsheets

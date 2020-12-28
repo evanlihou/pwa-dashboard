@@ -1,12 +1,30 @@
+/**
+ * This widget is currently not in use, it could use some better TypeScript-ificaiton at some point
+ */
+
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
-import { getWeather } from '../libs/climacell/get_weather';
+import getWeather from '../../libs/climacell/get_weather';
+import DashboardComponent from '../DashboardComponent';
 
 const weatherIcons = require.context('../resources/img/weather_icons', true);
 
-export default class WeatherWidget extends React.Component {
-  constructor(props) {
+type WeatherWidgetProps = {
+}
+
+type WeatherWidgetState = {
+  loading: boolean,
+  hasValues: boolean,
+  weather: any,
+  icon: any
+}
+
+export default class WeatherWidget
+  extends DashboardComponent<WeatherWidgetProps, WeatherWidgetState> {
+  private tickInterval?: number;
+
+  constructor(props: WeatherWidgetProps) {
     super(props);
     this.state = {
       loading: true,
@@ -14,12 +32,11 @@ export default class WeatherWidget extends React.Component {
       weather: {},
       icon: null,
     };
-    this.tickInterval = null;
   }
 
   componentDidMount() {
     this.tick();
-    this.tickInterval = setInterval(() => (this.tick()), 120 * 1000);
+    this.tickInterval = window.setInterval(() => (this.tick()), 120 * 1000);
   }
 
   componentWillUnmount() {
@@ -28,12 +45,12 @@ export default class WeatherWidget extends React.Component {
 
   tick() {
     this.setState({ loading: true });
-    function handleResposne(resp) {
+    const handleResposne = (resp: any) => {
       if (resp.error !== undefined) {
-        alert('Error fetching weather!');
+        // alert('Error fetching weather!');
         return;
       }
-      console.log(resp);
+      // console.log(resp);
       try {
         this.setState({
           icon: weatherIcons(`./${resp.weather.weather_code.value}.svg`).default,
@@ -49,8 +66,8 @@ export default class WeatherWidget extends React.Component {
         hasValues: true,
         weather: resp.weather,
       });
-    }
-    getWeather(handleResposne.bind(this));
+    };
+    getWeather(handleResposne);
   }
 
   render() {

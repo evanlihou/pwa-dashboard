@@ -16,8 +16,6 @@ import config from './get_configuration';
  * @param {function} sendResponse           - Callback for the response
  */
 function getJobs(request, sendResponse) {
-  console.log('Message: Getting Jobs');
-
   const items = {
     tsheets_token: config.key,
     tsheets_user_id: config.userid,

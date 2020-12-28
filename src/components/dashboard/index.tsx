@@ -1,15 +1,16 @@
 import React from 'react';
-import ChronoWidget from './chrono-widget';
-import DateWidget from './date-widget';
-import UserLayout from './user-layout';
-// import WeatherWidget from './weather-widget';
-import WorkWidget from './work-widget';
-import NotesWidget from './notes-widget';
+import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
+import ChronoWidget from './ChronoWidget';
+import DateWidget from './DateWidget';
+import UserLayout from '../UserLayout';
+// import WeatherWidget from './WeatherWidget';
+import WorkWidget from './WorkWidget';
+import NotesWidget from './NotesWidget';
 
 class Dashboard extends React.PureComponent {
   render() {
     return (
-      <UserLayout>
+      <UserLayout icon={faTachometerAlt} name="Dashboard">
         <div className="columns is-multiline">
           <div className="column is-half">
             <DateWidget />
@@ -18,16 +19,16 @@ class Dashboard extends React.PureComponent {
             <WorkWidget />
           </div>
           <div className="column is-half">
-            <ChronoWidget id={0} />
+            <ChronoWidget id="0" />
           </div>
           <div className="column is-half">
-            <ChronoWidget id={1} />
+            <ChronoWidget id="1" />
           </div>
           {/* <div className="column is-half">
             <WeatherWidget />
           </div> */}
           <div className="column">
-            <NotesWidget />
+            <NotesWidget id="0" />
           </div>
         </div>
       </UserLayout>
