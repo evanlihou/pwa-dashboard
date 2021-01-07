@@ -15,10 +15,10 @@ export default {
   // any, natural, landscape, landscape-primary, landscape-secondary,
   // portrait, portrait-primary, portrait-secondary
   orientation: 'landscape',
-  start_url: '/',
+  start_url: '/dashboard',
   background_color: '#00f',
   theme_color: '#00f',
-  display: 'standalone',
+  display: 'fullscreen',
   description: process.env.APP_DESCRIPTION,
   icons: [
     {
