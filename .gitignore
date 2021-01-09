@@ -81,3 +81,4 @@ src/libs/ckeditor5/build
 .DS_Store
 
 userNotes
+tmp

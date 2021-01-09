@@ -1,10 +1,12 @@
 import React from 'react';
 import ReactPWAIcon from './resources/img/react-pwa.png';
 import NotesApi from './api/notesApi';
+import UpdateApi from './api/updateApi';
 
 export default class Server {
   constructor({ addMiddleware }) {
     addMiddleware(NotesApi);
+    addMiddleware(UpdateApi);
   }
   // eslint-disable-next-line
   apply(serverHandler) {
@@ -12,7 +14,6 @@ export default class Server {
       const { htmlProps: { head } } = Application;
       head.push(<meta key="meta-theme-color" name="theme-color" content="#209cee" />);
       head.push(<meta key="no-scale" name="viewport" content="user-scalable=no,width=device-width,initial-scale=1" />);
-      // head.push(<meta key="no-scale" name="viewport" content="user-scalable=no" />);
     });
 
     serverHandler.hooks.beforeHtmlRender.tapPromise('AddFavIcon', async (Application) => {
