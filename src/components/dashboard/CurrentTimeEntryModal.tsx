@@ -1,9 +1,9 @@
 import React from 'react';
 import { format, startOfToday } from 'date-fns';
-import clockOut from '../../libs/kimai/clock_out';
-import updateNotes from '../../libs/kimai/update_timesheet';
+import KimaiSdk from 'kimai-sdk/src/index';
+import { StatusStatus } from 'kimai-sdk/src/GetStatus';
+import config from '../../libs/kimai/get_configuration';
 import DashboardComponent from '../DashboardComponent';
-import { StatusStatus } from '../../libs/kimai/get_status';
 
 type CurrentTimeEntryModalProps = {
   onClose: Function,
@@ -24,6 +24,10 @@ type CurrentTimeEntryModalState = {
 export default class CurrentTimeEntryModal extends DashboardComponent<
   CurrentTimeEntryModalProps, CurrentTimeEntryModalState> {
   private notesInput = React.createRef<HTMLTextAreaElement>();
+
+  private kimaiSdk = new KimaiSdk(config);
+
+  private autoFocusNotes = false;
 
   constructor(props: CurrentTimeEntryModalProps) {
     super(props);
@@ -53,7 +57,7 @@ export default class CurrentTimeEntryModal extends DashboardComponent<
       startTimeChanged: false,
     }, () => {
       // Automatically focus the notes when the component mounts
-      if (this.notesInput.current !== null) {
+      if (this.autoFocusNotes && this.notesInput.current !== null) {
         this.notesInput.current.focus();
         this.notesInput.current.selectionStart = this.notesInput.current.value.length;
         this.notesInput.current.selectionEnd = this.notesInput.current.value.length;
@@ -71,12 +75,12 @@ export default class CurrentTimeEntryModal extends DashboardComponent<
       return;
     }
 
-    await clockOut({
+    await this.kimaiSdk.clockOut({
       id: timesheetId,
       description: notes ?? '',
     });
 
-    onClose(true);
+    onClose(true, true);
   }
 
   async handleNotesChange() {
@@ -94,7 +98,7 @@ export default class CurrentTimeEntryModal extends DashboardComponent<
     const beginDate = startOfToday();
     beginDate.setTime(beginDate.getTime() + (startTimeMillis !== null ? startTimeMillis : 0));
 
-    await updateNotes({
+    await this.kimaiSdk.updateTimesheet({
       id: timesheetId,
       description: notes ?? '',
       begin: startTimeChanged === true ? beginDate : undefined,

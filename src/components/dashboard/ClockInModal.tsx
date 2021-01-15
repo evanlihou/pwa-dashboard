@@ -1,5 +1,6 @@
 import React from 'react';
-import clockIn from '../../libs/kimai/clock_in';
+import KimaiSdk from 'kimai-sdk/src/index';
+import config from '../../libs/kimai/get_configuration';
 import ActivitySelector from '../timetrack/ActivitySelector';
 import DashboardComponent from '../DashboardComponent';
 
@@ -14,6 +15,10 @@ type ClockInModalState = {
 export default class ClockInModal extends DashboardComponent<ClockInModalProps, ClockInModalState> {
   private notesInput = React.createRef<HTMLTextAreaElement>();
 
+  private kimaiSdk = new KimaiSdk(config);
+
+  private autoFocusNotes = false;
+
   constructor(props: ClockInModalProps) {
     super(props);
     this.state = {
@@ -24,7 +29,7 @@ export default class ClockInModal extends DashboardComponent<ClockInModalProps, 
 
   async componentDidMount() {
     // Automatically focus the notes when the component mounts
-    if (this.notesInput.current !== null) this.notesInput.current.focus();
+    if (this.autoFocusNotes && this.notesInput.current !== null) this.notesInput.current.focus();
   }
 
   async handleJobSelect(activityId: number, projectId: number) {
@@ -33,7 +38,7 @@ export default class ClockInModal extends DashboardComponent<ClockInModalProps, 
     const { addError } = this.context;
 
     try {
-      await clockIn({
+      await this.kimaiSdk.clockIn({
         activity: activityId,
         project: projectId,
         description: clockInNotes !== '' && clockInNotes !== null ? clockInNotes : undefined,

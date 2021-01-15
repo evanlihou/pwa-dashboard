@@ -1,15 +1,14 @@
 import React from 'react';
 import { faClock } from '@fortawesome/free-solid-svg-icons';
 import DataGrid from 'react-data-grid';
+import KimaiSdk from 'kimai-sdk/src/index';
+import Activity from 'kimai-sdk/src/@types/serverResponses/Activity';
+import Project from 'kimai-sdk/src/@types/serverResponses/Project';
 import UserLayout from '../UserLayout';
-import GetTimesheets from '../../libs/kimai/get_timesheets';
 import 'react-data-grid/dist/react-data-grid.css';
 import config from '../../libs/kimai/get_configuration';
-import GetStatus from '../../libs/kimai/get_status';
 import TimesheetEditModal from './TimesheetEditModal';
 import DashboardComponent from '../DashboardComponent';
-import Activity from '../../libs/kimai/@types/serverResponses/Activity';
-import Project from '../../libs/kimai/@types/serverResponses/Project';
 
 function sameDay(d1: Date, d2: Date) {
   return d1.getFullYear() === d2.getFullYear()
@@ -43,6 +42,8 @@ class TimetrackDashboard extends DashboardComponent<
   TimetrackDashboardProps, TimetrackDashboardState> {
   private columns: {key: string, name: string}[]
 
+  private kimaiSdk = new KimaiSdk(config);
+
   constructor(props: TimetrackDashboardProps) {
     super(props);
     this.columns = [
@@ -75,7 +76,7 @@ class TimetrackDashboard extends DashboardComponent<
 
   async getStatus() {
     try {
-      const status = await GetStatus();
+      const status = await this.kimaiSdk.getStatus();
       this.setState({
         status: {
           weekTotal: status.totals.week,
@@ -91,7 +92,7 @@ class TimetrackDashboard extends DashboardComponent<
 
   async getTimesheets() {
     try {
-      const timesheets = await GetTimesheets({});
+      const timesheets = await this.kimaiSdk.getTimesheets({});
       const formattedTimesheets = timesheets.map((r) => {
         const beginDate = new Date(r.begin);
         const endDate = r.end !== null ? new Date(r.end) : null;

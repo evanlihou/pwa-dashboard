@@ -11,10 +11,11 @@ const path = require('path');
 let process;
 
 // eslint-disable-next-line no-console
-const log = msg => console.log('SERVERMAN: ', msg);
+const log = (...msg) => console.log('SERVERMAN: ', ...msg);
 
 const startServer = () => {
   process = fork(path.join(__dirname, './server.js'));
+  log(`Started process ID ${process.pid}`);
   process.on('message', (msg) => {
     if (msg !== 'restartMe') return;
     log('Restarting server...');

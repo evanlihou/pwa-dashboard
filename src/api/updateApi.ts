@@ -71,8 +71,6 @@ app.post('/api/update', bodyParser.json(), async (req, res) => {
       return;
     }
 
-    await fs.promises.rename(path.join(__dirname, './'), path.join(__dirname, '../oldDist/'));
-
     const extractPath = path.join(__dirname, '../newDist/');
 
     localLog(`Unzipping to ${extractPath}...`);
@@ -82,6 +80,7 @@ app.post('/api/update', bodyParser.json(), async (req, res) => {
 
     localLog('Finished unzipping');
 
+    await fs.promises.rename(path.join(__dirname, './'), path.join(__dirname, '../oldDist/'));
     await fs.promises.rename(extractPath, path.join(__dirname, './'));
     await fs.promises.rmdir(path.join(__dirname, '../oldDist/'), { recursive: true });
 
@@ -91,6 +90,7 @@ app.post('/api/update', bodyParser.json(), async (req, res) => {
 
     restartServer();
   } catch (err) {
+    localLog(err);
     res.status(500).send(err);
   }
 });

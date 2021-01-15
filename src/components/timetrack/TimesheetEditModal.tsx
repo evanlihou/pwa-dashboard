@@ -1,11 +1,12 @@
 import React from 'react';
-import UpdateTimesheet from '../../libs/kimai/update_timesheet';
-import GetTimesheet from '../../libs/kimai/get_timesheet';
-import { toLocalTime } from '../../libs/kimai/date_tools';
-import GetActivities from '../../libs/kimai/get_activities';
+// import UpdateTimesheet from '../../libs/kimai/update_timesheet';
+// import GetTimesheet from '../../libs/kimai/get_timesheet';
+// import { toLocalTime } from '../../libs/kimai/date_tools';
+// import GetActivities from '../../libs/kimai/get_activities';
+import KimaiSdk from 'kimai-sdk/src/index';
+import GroupedActivities, { ProjectActivities } from 'kimai-sdk/src/@types/GroupedActivities';
+import config from '../../libs/kimai/get_configuration';
 import DashboardComponent from '../DashboardComponent';
-import GroupedActivities, { ProjectActivities } from '../../libs/kimai/@types/GroupedActivities';
-import Project from '../../libs/kimai/@types/serverResponses/Project';
 
 type TimesheetEditModalProps = {
   timesheetId: number,
@@ -30,6 +31,10 @@ export default class TimesheetEditModal extends DashboardComponent<
   TimesheetEditModalProps, TimesheetEditModalState> {
   private notesInput = React.createRef<HTMLTextAreaElement>();
 
+  private kimaiSdk = new KimaiSdk(config);
+
+  private autoFocusNotes = false;
+
   constructor(props: TimesheetEditModalProps) {
     super(props);
     this.state = {
@@ -50,9 +55,9 @@ export default class TimesheetEditModal extends DashboardComponent<
   async componentDidMount() {
     const { timesheetId } = this.props;
 
-    const timesheet = await GetTimesheet(timesheetId);
+    const timesheet = await this.kimaiSdk.getTimesheet(timesheetId);
 
-    const activities = await GetActivities();
+    const activities = await this.kimaiSdk.getActivities();
 
     this.setState({
       hasValues: true,
@@ -61,9 +66,9 @@ export default class TimesheetEditModal extends DashboardComponent<
       notes: timesheet.description,
       activity: `${timesheet.project}-${timesheet.activity}`,
       activityChanged: false,
-      startStr: toLocalTime(timesheet.begin, false),
+      startStr: this.kimaiSdk.toLocalTime(timesheet.begin, false),
       selectedStartDate: null,
-      endStr: toLocalTime(timesheet.end, false),
+      endStr: this.kimaiSdk.toLocalTime(timesheet.end, false),
       selectedEndDate: null,
       activities,
     });
@@ -90,7 +95,7 @@ export default class TimesheetEditModal extends DashboardComponent<
       return;
     }
 
-    await UpdateTimesheet({
+    await this.kimaiSdk.updateTimesheet({
       id: timesheetId,
       description: notes,
       activityId: activityChanged === true ? activityId : undefined,

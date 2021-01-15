@@ -1,7 +1,9 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
-import getStatus, { StatusStatus } from '../../libs/kimai/get_status';
+import KimaiSdk from 'kimai-sdk/src/index';
+import { StatusStatus } from 'kimai-sdk/src/GetStatus';
+import config from '../../libs/kimai/get_configuration';
 import ClockInModal from './ClockInModal';
 import CurrentTimeEntryModal from './CurrentTimeEntryModal';
 import DashboardComponent from '../DashboardComponent';
@@ -22,6 +24,8 @@ type WorkWidgetState = {
 
 export default class WorkWidget extends DashboardComponent<{}, WorkWidgetState> {
   private tickInterval: number | null;
+
+  private kimaiSdk = new KimaiSdk(config);
 
   constructor(props: {}) {
     super(props);
@@ -58,7 +62,7 @@ export default class WorkWidget extends DashboardComponent<{}, WorkWidgetState> 
     const { addError } = this.context;
     this.setState({ loading: true });
     try {
-      const { status, totals } = await getStatus();
+      const { status, totals } = await this.kimaiSdk.getStatus();
       this.setState({
         status,
         hasValues: true,
@@ -137,11 +141,11 @@ export default class WorkWidget extends DashboardComponent<{}, WorkWidgetState> 
         ) : <></>}
         {promptTimeEntryModal ? (
           <CurrentTimeEntryModal
-            onClose={(shouldRefresh = false) => {
+            onClose={(shouldRefresh = false, didClockOut = false) => {
               if (shouldRefresh) {
                 this.tick();
               }
-              this.setState({ promptTimeEntryModal: false });
+              this.setState({ promptTimeEntryModal: false, isIn: !didClockOut });
             }}
             status={status!}
           />

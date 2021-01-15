@@ -28,6 +28,7 @@
     "eslint-import-resolver-webpack": "^0.13.0",
     "express-fileupload": "^1.2.0",
     "fork-ts-checker-webpack-plugin": "^4.1.6",
+    "kimai-sdk": "github:evanlihou/kimai-sdk",
     "react-data-grid": "^7.0.0-canary.33",
     "sanitize-html": "^2.3.0"
   },

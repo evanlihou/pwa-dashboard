@@ -1,8 +1,12 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
-import GetActivities from '../../libs/kimai/get_activities';
-import GroupedActivities from '../../libs/kimai/@types/GroupedActivities';
+// import GetActivities from '../../libs/kimai/get_activities';
+// import GroupedActivities from '../../libs/kimai/@types/GroupedActivities';
+
+import KimaiSdk from 'kimai-sdk/src/index';
+import GroupedActivities from 'kimai-sdk/src/@types/GroupedActivities';
+import config from '../../libs/kimai/get_configuration';
 
 // Get around the fact this package doesn't have types
 const bulmaCollapsible: any = require('@creativebulma/bulma-collapsible');
@@ -28,7 +32,8 @@ export default class ActivitySelector extends React.Component<ActivitySelectorPr
   }
 
   async componentDidMount() {
-    const activities = await GetActivities();
+    const kimaiSdk = new KimaiSdk(config);
+    const activities = await kimaiSdk.getActivities();
 
     this.setState({
       loading: false,
