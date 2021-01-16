@@ -13,8 +13,9 @@ type CountdownWidgetState = {
   endTime: Date | null,
   endTimeMillis: number | null,
   runningTime: string,
-  isFlash: boolean,
+  isFlash: number,
   didFlash: boolean,
+  flashIntervalId?: number,
 };
 
 export default class CountdownWidget extends DashboardComponent<
@@ -34,7 +35,7 @@ export default class CountdownWidget extends DashboardComponent<
       endTime: null,
       endTimeMillis: null,
       runningTime: '\u2014',
-      isFlash: false,
+      isFlash: 0,
       // True to prevent it flashing on page load, gets reset on countdown start
       didFlash: true,
     };
@@ -142,6 +143,7 @@ export default class CountdownWidget extends DashboardComponent<
       isRunning: false,
       modalVisible: false,
       runningTime: '\u2014',
+      isFlash: 0,
     });
     if (this.tickInterval !== null) {
       window.clearInterval(this.tickInterval);
@@ -156,13 +158,10 @@ export default class CountdownWidget extends DashboardComponent<
       return;
     }
 
-    let flashesToDo = 10;
-    this.setState({
-      didFlash: true,
-    });
+    let flashesToDo = 200;
     const intervalId = window.setInterval(() => {
       this.setState({
-        isFlash: !this.state.isFlash,
+        isFlash: this.state.isFlash !== 1 ? 1 : 2,
       });
 
       flashesToDo -= 1;
@@ -171,6 +170,25 @@ export default class CountdownWidget extends DashboardComponent<
         window.clearInterval(intervalId);
       }
     }, 500);
+
+    this.setState({
+      didFlash: true,
+      flashIntervalId: intervalId,
+    });
+  }
+
+  stopFlash() {
+    if (this.state.flashIntervalId === undefined) {
+      return;
+    }
+
+    window.clearInterval(this.state.flashIntervalId);
+
+    this.setState({
+      didFlash: true,
+      isFlash: 0,
+      flashIntervalId: undefined,
+    });
   }
 
   render() {
@@ -179,11 +197,10 @@ export default class CountdownWidget extends DashboardComponent<
     } = this.state;
     return (
       <div>
-        <div className="box notification is-yellow" role="button" tabIndex={0} onKeyPress={(e) => { if (e.key === 'Enter') this.onClick(); else if (e.key === 'r') this.stopCountdown(); }} onClick={() => { this.onClick(); }} onContextMenu={(e) => { e.preventDefault(); this.stopCountdown(); }}>
+        <div className="box notification is-yellow" style={{ marginBottom: 0 }} role="button" tabIndex={0} onKeyPress={(e) => { if (e.key === 'Enter') this.onClick(); else if (e.key === 'r') this.stopCountdown(); }} onClick={() => { this.onClick(); }} onContextMenu={(e) => { e.preventDefault(); this.stopCountdown(); }}>
           <div className="heading">Countdown</div>
           <div className="title">{runningTime}</div>
         </div>
-
         {modalVisible ? (
           <div className="modal is-active">
             {/* I dont think a "none" role is the right thing here */}
@@ -216,9 +233,9 @@ export default class CountdownWidget extends DashboardComponent<
             </div>
           </div>
         ) : <></>}
-        {isFlash ? (
+        {isFlash !== 0 ? (
           <div className="modal is-active">
-            <div role="none" className="modal-background" style={{ backgroundColor: 'rgba(170, 0, 0, 0.86)' }} />
+            <div role="none" className="modal-background" style={{ backgroundColor: `rgba(170, 0, 0, ${isFlash === 1 ? '0.86' : 0})` }} onClick={this.stopFlash.bind(this)} />
           </div>
         ) : <></>}
       </div>

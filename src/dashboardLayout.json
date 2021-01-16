@@ -14,14 +14,14 @@
     },
     {
       "type": "chrono",
-      "name": "Chrono 1",
+      "name": "Chrono",
       "key": "1",
       "size": "half"
     },
     {
-      "type": "chrono",
-      "name": "Chrono 2",
-      "key": "2",
+      "type": "countdown",
+      "name": "Countdown",
+      "key": "1",
       "size": "half"
     },
     {

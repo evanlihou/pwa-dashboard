@@ -2,13 +2,15 @@ import React from 'react';
 import DashboardComponent from '../DashboardComponent';
 
 type DateWidgetProps = {
+  name: string,
+  otherTzId: string,
+  otherTzName: string,
 }
 
 type DateWidgetState = {
   time: {
     main: string,
     otherTz: string,
-    otherTzName: string,
     zulu: string
   }
 }
@@ -16,17 +18,12 @@ type DateWidgetState = {
 export default class DateWidget extends DashboardComponent<DateWidgetProps, DateWidgetState> {
   private tickInterval?: number;
 
-  public otherTzName: string = 'Chicago';
-
-  public otherTzIdentifier: string = 'America/Chicago';
-
   constructor(props: DateWidgetProps) {
     super(props);
     this.state = {
       time: {
         main: '',
         otherTz: '',
-        otherTzName: this.otherTzName,
         zulu: '',
       },
     };
@@ -47,8 +44,7 @@ export default class DateWidget extends DashboardComponent<DateWidgetProps, Date
     this.setState({
       time: {
         main: date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
-        otherTzName: this.otherTzName,
-        otherTz: date.toLocaleTimeString('en-US', { timeZone: this.otherTzIdentifier, hour: 'numeric', minute: '2-digit' }),
+        otherTz: date.toLocaleTimeString('en-US', { timeZone: this.props.otherTzId, hour: 'numeric', minute: '2-digit' }),
         zulu: date.toLocaleTimeString('en-US', {
           timeZone: 'Etc/UTC', hour: '2-digit', minute: '2-digit', hour12: false,
         }),
@@ -58,6 +54,7 @@ export default class DateWidget extends DashboardComponent<DateWidgetProps, Date
 
   render() {
     const { time } = this.state;
+    const { otherTzName } = this.props;
     return (
       <div className="box notification is-info">
         <div className="heading">Time</div>
@@ -65,7 +62,7 @@ export default class DateWidget extends DashboardComponent<DateWidgetProps, Date
         <div className="level">
           <div className="level-item">
             <div className="">
-              <div className="heading">{time.otherTzName}</div>
+              <div className="heading">{otherTzName}</div>
               <div className="title is-5">{time.otherTz}</div>
             </div>
           </div>
