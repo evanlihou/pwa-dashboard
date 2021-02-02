@@ -3,6 +3,7 @@
     {
       "type": "date",
       "name": "Date",
+      "color": "info",
       "otherTzId": "America/Chicago",
       "otherTzName": "Chicago",
       "size": "half"
@@ -10,17 +11,20 @@
     {
       "type": "timetrack",
       "name": "TimeTrack",
+      "color": "purple",
       "size": "half"
     },
     {
       "type": "chrono",
       "name": "Chrono",
+      "color": "yellow",
       "key": "1",
       "size": "half"
     },
     {
       "type": "countdown",
       "name": "Countdown",
+      "color": "turquoise",
       "key": "1",
       "size": "half"
     },

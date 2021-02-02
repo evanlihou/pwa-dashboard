@@ -7,6 +7,7 @@ const CustomEditor = require('../../libs/ckeditor5/build/ckeditor');
 
 type NotesWidgetProps = {
   id?: string,
+  name: string
 }
 
 type NotesWidgetState = {
@@ -56,7 +57,7 @@ export default class NotesWidget extends DashboardComponent<NotesWidgetProps, No
     const { notes } = this.state;
     return (
       <div className="box notification" onContextMenu={this.onLongPress.bind(this)}>
-        <div className="heading">Notes</div>
+        <div className="heading">{this.props.name}</div>
         <div className="notesEditor content">
           <CKEditor
             editor={CustomEditor}

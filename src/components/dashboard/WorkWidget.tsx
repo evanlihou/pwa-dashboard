@@ -8,6 +8,11 @@ import ClockInModal from './ClockInModal';
 import CurrentTimeEntryModal from './CurrentTimeEntryModal';
 import DashboardComponent from '../DashboardComponent';
 
+type WorkWidgetProps = {
+  name: string,
+  color: string,
+}
+
 type WorkWidgetState = {
   loading: boolean,
   promptClockInJobs: boolean,
@@ -22,12 +27,12 @@ type WorkWidgetState = {
   status: StatusStatus | null,
 }
 
-export default class WorkWidget extends DashboardComponent<{}, WorkWidgetState> {
+export default class WorkWidget extends DashboardComponent<WorkWidgetProps, WorkWidgetState> {
   private tickInterval: number | null;
 
   private kimaiSdk = new KimaiSdk(config);
 
-  constructor(props: {}) {
+  constructor(props: WorkWidgetProps) {
     super(props);
     this.state = {
       loading: true,
@@ -100,8 +105,8 @@ export default class WorkWidget extends DashboardComponent<{}, WorkWidgetState> 
       promptClockInJobs, promptTimeEntryModal, status,
     } = this.state;
     return (
-      <div role="button" tabIndex={0} className="box notification is-purple" onClick={() => { this.clockInOut(); }} onKeyPress={(e) => { if (e.key === 'Enter') this.clockInOut(); }}>
-        <div className="heading">TimeTrack</div>
+      <div role="button" tabIndex={0} className={`box notification is-${this.props.color}`} onClick={() => { this.clockInOut(); }} onKeyPress={(e) => { if (e.key === 'Enter') this.clockInOut(); }}>
+        <div className="heading">{this.props.name}</div>
         {loading ? <span style={{ position: 'absolute', top: '5px', right: '10px' }}><FontAwesomeIcon icon={faCircleNotch} className="fa-spin" /></span> : <></>}
         {!hasValues ? <></> : (
           <div>

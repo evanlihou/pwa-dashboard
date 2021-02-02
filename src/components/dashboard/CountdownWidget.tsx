@@ -4,6 +4,8 @@ import DashboardComponent from '../DashboardComponent';
 
 type CountdownWidgetProps = {
   id?: string,
+  name: string,
+  color: string,
 };
 
 type CountdownWidgetState = {
@@ -197,8 +199,8 @@ export default class CountdownWidget extends DashboardComponent<
     } = this.state;
     return (
       <div>
-        <div className="box notification is-yellow" style={{ marginBottom: 0 }} role="button" tabIndex={0} onKeyPress={(e) => { if (e.key === 'Enter') this.onClick(); else if (e.key === 'r') this.stopCountdown(); }} onClick={() => { this.onClick(); }} onContextMenu={(e) => { e.preventDefault(); this.stopCountdown(); }}>
-          <div className="heading">Countdown</div>
+        <div className={`box notification is-${this.props.color}`} style={{ marginBottom: 0 }} role="button" tabIndex={0} onKeyPress={(e) => { if (e.key === 'Enter') this.onClick(); else if (e.key === 'r') this.stopCountdown(); }} onClick={() => { this.onClick(); }} onContextMenu={(e) => { e.preventDefault(); this.stopCountdown(); }}>
+          <div className="heading">{this.props.name}</div>
           <div className="title">{runningTime}</div>
         </div>
         {modalVisible ? (

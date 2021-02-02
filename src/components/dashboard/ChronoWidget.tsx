@@ -3,6 +3,8 @@ import DashboardComponent from '../DashboardComponent';
 
 type ChronoWidgetProps = {
   id?: string,
+  color: string,
+  name: string
 };
 
 type ChronoWidgetState = {
@@ -103,11 +105,10 @@ export default class ChronoWidget extends DashboardComponent<ChronoWidgetProps, 
   }
 
   render() {
-    const { runningTime } = this.state;
     return (
-      <div className="box notification is-yellow" role="button" tabIndex={0} onKeyPress={(e) => { if (e.key === 'Enter') this.startStopChrono(); else if (e.key === 'r') this.onLongPress(); }} onClick={() => { this.startStopChrono(); }} onContextMenu={(e) => { e.preventDefault(); this.onLongPress(); }}>
-        <div className="heading">Chrono</div>
-        <div className="title">{runningTime}</div>
+      <div className={`box notification is-${this.props.color}`} role="button" tabIndex={0} onKeyPress={(e) => { if (e.key === 'Enter') this.startStopChrono(); else if (e.key === 'r') this.onLongPress(); }} onClick={() => { this.startStopChrono(); }} onContextMenu={(e) => { e.preventDefault(); this.onLongPress(); }}>
+        <div className="heading">{this.props.name}</div>
+        <div className="title">{this.state.runningTime}</div>
       </div>
     );
   }

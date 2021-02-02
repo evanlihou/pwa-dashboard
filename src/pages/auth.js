@@ -8,6 +8,14 @@ export default [
     },
   },
   {
+    path: '/news',
+    exact: true,
+    component: () => import('../components/news/index'),
+    seo: {
+      title: 'News',
+    },
+  },
+  {
     path: '/timetrack',
     exact: true,
     component: () => import('../components/timetrack/index'),

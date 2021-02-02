@@ -3,6 +3,7 @@ import DashboardComponent from '../DashboardComponent';
 
 type DateWidgetProps = {
   name: string,
+  color: string,
   otherTzId: string,
   otherTzName: string,
 }
@@ -56,8 +57,8 @@ export default class DateWidget extends DashboardComponent<DateWidgetProps, Date
     const { time } = this.state;
     const { otherTzName } = this.props;
     return (
-      <div className="box notification is-info">
-        <div className="heading">Time</div>
+      <div className={`box notification is-${this.props.color}`}>
+        <div className="heading">{this.props.name}</div>
         <div className="title">{time.main}</div>
         <div className="level">
           <div className="level-item">

@@ -6,7 +6,8 @@ $custom-colors: (
     "purple": $purple,
     "orange": scale-color($orange, $lightness: 30%),
     "yellow": scale-color($yellow, $lightness: -40%),
-    "grey-light": scale-color($grey-light, $lightness: -40%)
+    "grey-light": scale-color($grey-light, $lightness: -40%),
+    "turquoise": scale-color($turquoise, $lightness: -30%),
 );
 // $body-font-size: 1.2em;
 $size-3: 2rem; // Override main font size

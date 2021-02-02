@@ -2,11 +2,13 @@ import React from 'react';
 import ReactPWAIcon from './resources/img/react-pwa.png';
 import NotesApi from './api/notesApi';
 import UpdateApi from './api/updateApi';
+import NewsApi from './api/newsApi';
 
 export default class Server {
   constructor({ addMiddleware }) {
     addMiddleware(NotesApi);
     addMiddleware(UpdateApi);
+    addMiddleware(NewsApi);
   }
   // eslint-disable-next-line
   apply(serverHandler) {

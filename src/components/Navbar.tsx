@@ -20,6 +20,7 @@ const Navbar = () => (
   <nav className="navbar is-fixed-bottom is-spaced" role="navigation" aria-label="main navigation">
     <div id="navbarBasicExample" className="navbar-menu is-flex is-justify-content-center">
       <NavItem to="/dashboard">Dashboard</NavItem>
+      <NavItem to="/news">News</NavItem>
       <NavItem to="/timetrack">Timetrack</NavItem>
     </div>
   </nav>

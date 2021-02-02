@@ -30,6 +30,7 @@ class Dashboard extends React.PureComponent {
         return {
           component: DateWidget,
           name: widget.name,
+          color: widget.color,
           size: normalizedSize,
           passthroughOpts: {
             otherTzId: widget.otherTzId,
@@ -41,6 +42,7 @@ class Dashboard extends React.PureComponent {
         return {
           component: WorkWidget,
           name: widget.name,
+          color: widget.color,
           size: widget.size,
           passthroughOpts: {},
         };
@@ -49,6 +51,7 @@ class Dashboard extends React.PureComponent {
         return {
           component: ChronoWidget,
           name: widget.name,
+          color: widget.color,
           size: widget.size,
           key: widget.key,
           passthroughOpts: {},
@@ -58,6 +61,7 @@ class Dashboard extends React.PureComponent {
         return {
           component: CountdownWidget,
           name: widget.name,
+          color: widget.color,
           size: widget.size,
           key: widget.key,
           passthroughOpts: {},
@@ -67,6 +71,7 @@ class Dashboard extends React.PureComponent {
         return {
           component: NotesWidget,
           name: widget.name,
+          color: widget.color,
           size: widget.size,
           key: widget.key,
           passthroughOpts: {},
@@ -86,6 +91,7 @@ class Dashboard extends React.PureComponent {
               <component.component
                 name={component.name}
                 id={component.key}
+                color={component.color}
                 // This linting rule is bad
                 // eslint-disable-next-line react/jsx-props-no-spreading
                 {...component.passthroughOpts}
