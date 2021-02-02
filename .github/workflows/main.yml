@@ -32,6 +32,37 @@ jobs:
       - name: Install Dependencies
         run: npm install
       - name: Build
+        env:
+          APP_NAME: "PWA Dashboard"
+          APP_DESCRIPTION: "A dashboard. That's it."
+
+          # App Settings
+          CORS_PROXY_PORT: 8080
+          KIMAI_FRIENDLY_URL: ${{ secrets.KIMAI_FRIENDLY_URL }}
+          KIMAI_BASE_URL: ${{ secrets.KIMAI_BASE_URL }}
+          KIMAI_USER: ${{ secrets.KIMAI_USER }}
+          KIMAI_KEY: ${{ secrets.KIMAI_KEY }}
+
+          # PAWCONFIG
+          PORT: 3003
+          HOST: 0.0.0.0
+          APP_ROOT_URL: "/"
+          CDN_URL: ""
+          SSR_ENABLED: true
+          SERVICE_WORKER_ENABLED: true
+          SINGLE_PAGE_APPLICATION: false
+          USE_HASHED_ROUTES: false
+          ASYNC_CSS: true
+          POLYFILL_CDN: false
+          REACT_CDN: false
+          CLIENT_ROOT_ELEMENT_ID: "app"
+          HSTS_ENABLED: true
+          HSTS_MAX_AGE: 31536000
+          ASSETS_MAX_AGE: 2592000000
+          HSTS_INCLUDE_SUBDOMAINS: false
+          HSTS_PRELOAD: false
+          DISABLE_JS: false
+          DISABLE_CACHE: true
         run: npm run build
 
       - name: ssh deploy
