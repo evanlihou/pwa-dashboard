@@ -79,7 +79,7 @@ export default class WorkWidget extends DashboardComponent<WorkWidgetProps, Work
           ? (new Date(status.start)).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
           : null,
         today: totals.day,
-        thisWeek: totals.week,
+        thisWeek: totals.fribWeek,
       });
     } catch (error) {
       addError(error);
@@ -127,7 +127,7 @@ export default class WorkWidget extends DashboardComponent<WorkWidgetProps, Work
               </div>
               <div className="level-item">
                 <div className="">
-                  <div className="heading">This Week</div>
+                  <div className="heading">FRIB This Week</div>
                   <div className="title is-5">{thisWeek}</div>
                 </div>
               </div>
