@@ -5,7 +5,7 @@ import KimaiSdk from 'kimai-sdk/src/index';
 import Activity from 'kimai-sdk/src/@types/serverResponses/Activity';
 import Project from 'kimai-sdk/src/@types/serverResponses/Project';
 import UserLayout from '../UserLayout';
-import 'react-data-grid/dist/react-data-grid.css';
+// import 'react-data-grid/dist/react-data-grid.css';
 import config from '../../libs/kimai/get_configuration';
 import TimesheetEditModal from './TimesheetEditModal';
 import DashboardComponent from '../DashboardComponent';

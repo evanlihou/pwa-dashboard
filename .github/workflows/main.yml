@@ -2,7 +2,7 @@
 
 name: CI
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
@@ -42,6 +42,8 @@ jobs:
           KIMAI_BASE_URL: ${{ secrets.KIMAI_BASE_URL }}
           KIMAI_USER: ${{ secrets.KIMAI_USER }}
           KIMAI_KEY: ${{ secrets.KIMAI_KEY }}
+          SERVER_JWT_SECRET: ${{ secrets.SERVER_JWT_SECRET }}
+          SERVER_AUTH_PASSWORD: ${{ secrets.SERVER_AUTH_PASSWORD }}
 
           # PAWCONFIG
           PORT: 3003
