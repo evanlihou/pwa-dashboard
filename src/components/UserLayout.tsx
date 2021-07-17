@@ -1,6 +1,5 @@
 import React, { PropsWithChildren } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { withRouter } from 'react-router-dom';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import Navbar from './Navbar';
 import ErrorProvider from './ErrorContext';
@@ -39,22 +38,25 @@ function ErrorNotification() {
 type UserLayoutProps = PropsWithChildren<{
   icon: IconProp,
   name: string,
+  bgColor?: string,
+  textColor?: string,
+  fullHeight?: boolean
 }>
 
 class UserLayout extends React.PureComponent<UserLayoutProps, {}> {
   render() {
     // eslint-disable-next-line
-    const { children, icon, name } = this.props;
+    const { children, icon, name, fullHeight, bgColor, textColor } = this.props;
     return (
       <ErrorProvider>
-        <div className="has-navbar-fixed-bottom">
+        <div className={`has-navbar-fixed-bottom ${bgColor !== undefined ? `has-background-${bgColor}` : ''} ${textColor !== undefined ? `has-text-${textColor}` : ''}`} style={{ minHeight: (fullHeight === true ? '100vh' : undefined) }}>
           <div className="wrapper container p-md">
             <div className="columns">
               <main className="column main">
                 <div className="level">
                   <div className="level-left">
                     <div className="level-item">
-                      <div className="title has-text-primary">
+                      <div className={`title ${textColor !== undefined ? `has-text-${textColor}` : 'has-text-primary'}`}>
                         <FontAwesomeIcon icon={icon} />
                         {' '}
                         {name}

@@ -23,4 +23,12 @@ export default [
       title: 'Timetrack',
     },
   },
+  {
+    path: '/deskStatus',
+    exact: true,
+    component: () => import('../components/desk-status/index'),
+    seo: {
+      title: 'Desk Status',
+    },
+  },
 ];

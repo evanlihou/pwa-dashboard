@@ -21,6 +21,7 @@ const Navbar = () => (
     <div id="navbarBasicExample" className="navbar-menu is-flex is-justify-content-center">
       <NavItem to="/dashboard">Dashboard</NavItem>
       <NavItem to="/news">News</NavItem>
+      <NavItem to="/deskStatus">Desk Status</NavItem>
       <NavItem to="/timetrack">Timetrack</NavItem>
     </div>
   </nav>
