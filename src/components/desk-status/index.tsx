@@ -113,7 +113,7 @@ class DeskStatus extends DashboardComponent<DeskStatusProps, DeskStatusState> {
       }
     } catch (err) {
       if (err === ERR_HASS_HOST_REQUIRED) {
-        const hassUrl = 'http://home';
+        const hassUrl = 'https://home';
         // Redirect user to log in on their instance
         auth = await getAuth({
           hassUrl,
