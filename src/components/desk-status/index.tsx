@@ -113,7 +113,7 @@ class DeskStatus extends DashboardComponent<DeskStatusProps, DeskStatusState> {
       }
     } catch (err) {
       if (err === ERR_HASS_HOST_REQUIRED) {
-        const hassUrl = 'https://home';
+        const hassUrl = 'https://homeassistant.evandoes.dev';
         // Redirect user to log in on their instance
         auth = await getAuth({
           hassUrl,
