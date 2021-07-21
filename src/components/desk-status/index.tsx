@@ -22,7 +22,8 @@ enum DeskStatusType {
   NotWorking,
   Available,
   MeetingNoCamera,
-  MeetingWithCamera
+  MeetingWithCamera,
+  Focusing
 }
 
 type DeskStatusInfo = {
@@ -56,6 +57,11 @@ const deskStatusInfo: {[key in DeskStatusType]: DeskStatusInfo} = {
     text: 'Meeting - Camera On',
     bgColor: 'danger-dark',
     textColor: 'white',
+  },
+  [DeskStatusType.Focusing]: {
+    text: 'Focusing',
+    bgColor: 'yellow',
+    textColor: 'black',
   },
 };
 
@@ -141,6 +147,8 @@ class DeskStatus extends DashboardComponent<DeskStatusProps, DeskStatusState> {
         statusEnumValue = DeskStatusType.MeetingNoCamera;
       } else if (statusString === 'Meeting - Camera ON') {
         statusEnumValue = DeskStatusType.MeetingWithCamera;
+      } else if (statusString === 'Focusing') {
+        statusEnumValue = DeskStatusType.Focusing;
       }
 
       this.setState({ status: statusEnumValue });
