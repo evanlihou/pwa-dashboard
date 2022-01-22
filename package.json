@@ -33,7 +33,7 @@
     "home-assistant-js-websocket": "^5.10.0",
     "jsonwebtoken": "^8.5.1",
     "kimai-sdk": "github:evanlihou/kimai-sdk",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^3.1.1",
     "react-data-grid": "^7.0.0-canary.36",
     "rss-parser": "^3.11.0",
     "sanitize-html": "^2.3.2",
